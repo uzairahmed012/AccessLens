@@ -1,0 +1,39 @@
+# Dependencies and local package-manager caches
+node_modules/
+.npm-cache/
+.npm/
+
+# Build output and compiler caches
+dist/
+coverage/
+*.tsbuildinfo
+.vite/
+.vitest/
+.cache/
+
+# Private environment files; keep the safe setup template
+.env
+.env.*
+!.env.example
+
+# Local agent tooling and machine-specific metadata
+/.agents/
+/.codex/
+/.aws/
+/skills-lock.json
+
+# Generated Prisma client (recreated by npm install / db:generate)
+/apps/api/src/generated/
+
+# Test output, screenshots, traces and local browser state
+test-results/
+playwright-report/
+blob-report/
+playwright/.auth/
+artifacts/
+
+# Logs and operating-system files
+*.log
+.DS_Store
+Thumbs.db
+Desktop.ini

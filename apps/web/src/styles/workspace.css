@@ -1,0 +1,302 @@
+.app-shell h1,
+.app-shell h2 {
+  font-family: var(--font-display);
+}
+.app-shell h1 {
+  font-weight: 650;
+}
+.app-shell .page {
+  max-width: 1440px;
+  margin-inline: auto;
+}
+.mobile-workspace-menu {
+  display: none;
+}
+.nav-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.workspace-switch {
+  padding: 14px 10px;
+}
+.workspace-key {
+  display: none;
+}
+.workspace-switch strong,
+.nav-link {
+  font-size: 14px;
+}
+.topbar {
+  gap: 16px;
+}
+.topbar-actions {
+  gap: 8px;
+}
+.breadcrumb {
+  min-width: 0;
+}
+.breadcrumb strong {
+  white-space: nowrap;
+}
+.workspace-preview-banner {
+  font-size: 12px;
+}
+.scan-panel {
+  border-radius: var(--radius-card);
+  box-shadow: none;
+}
+.scan-panel-heading h2 {
+  font-size: 21px;
+  font-weight: 650;
+}
+.scan-panel-heading p,
+.scan-disabled-note {
+  font-size: 13px;
+}
+.history-card,
+.getting-started-card,
+.roadmap-card {
+  border-radius: var(--radius-card);
+}
+.card-header h2 {
+  font-size: 18px;
+}
+.card-header p {
+  font-size: 13px;
+}
+.empty-state :is(h2, h3) {
+  font-size: 18px;
+  font-family: var(--font-display);
+}
+.empty-state p {
+  font-size: 14px;
+}
+.scan-preparation {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 28px;
+}
+.preparation-card {
+  padding: 28px;
+}
+.preparation-card h2 {
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+.preparation-card .page-note {
+  margin-bottom: 0;
+}
+.history-page-card {
+  padding: 20px;
+}
+.history-page-card .center-action {
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+.settings-card .setting-row p {
+  max-width: 680px;
+}
+.app-shell .page-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-size: 13px;
+}
+.build-label {
+  line-height: 1.8;
+  letter-spacing: 0.5px;
+}
+.build-card strong {
+  font-size: 15px;
+}
+.build-card p {
+  font-size: 13px;
+}
+.main-footer {
+  font-size: 12px;
+}
+@media (max-width: 1150px) {
+  .topbar .back-to-site {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .sidebar {
+    width: 224px;
+  }
+  .workspace-main {
+    margin-left: 224px;
+  }
+  .workspace-switch strong {
+    font-size: 12px;
+  }
+  .scan-preparation {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 800px) and (min-width: 641px) {
+  .sidebar {
+    width: 200px;
+  }
+  .workspace-main {
+    margin-left: 200px;
+  }
+  .topbar {
+    flex-wrap: wrap;
+    padding-block: 10px;
+    gap: 8px;
+  }
+  .topbar-actions {
+    margin-left: auto;
+  }
+}
+@media (max-width: 640px) {
+  .sidebar {
+    position: relative;
+    width: auto;
+    padding: 20px 20px 0;
+  }
+  .sidebar > .brand {
+    margin-bottom: 20px;
+  }
+  .mobile-workspace-menu {
+    display: block;
+    position: absolute;
+    top: 16px;
+    right: 20px;
+  }
+  .main-nav .secondary-nav-link {
+    display: none;
+  }
+  .main-nav {
+    justify-content: flex-start;
+    gap: 8px;
+  }
+  .nav-link {
+    font-size: 12px;
+    min-height: 44px;
+    padding: 8px;
+  }
+  .workspace-main {
+    margin-left: 0;
+  }
+  .topbar {
+    flex-wrap: wrap;
+    padding: 10px 20px;
+    gap: 8px;
+  }
+  .topbar-actions {
+    margin-left: auto;
+    gap: 4px;
+  }
+  .breadcrumb {
+    font-size: 12px;
+  }
+  .breadcrumb > span,
+  .breadcrumb > svg {
+    display: none;
+  }
+  .api-status {
+    font-size: 12px;
+  }
+  .topbar-separator {
+    display: none;
+  }
+  .page-heading {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .scan-panel-heading h2 {
+    font-size: 18px;
+  }
+  .scan-panel-heading p {
+    font-size: 12px;
+  }
+  .scan-panel-heading .preview-badge {
+    display: none;
+  }
+  .scan-disabled-note {
+    font-size: 12px;
+  }
+  .scan-panel-footer {
+    font-size: 12px;
+    gap: 8px 16px;
+  }
+  .scan-panel-footer > span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .card-header h2 {
+    font-size: 17px;
+  }
+  .card-header p {
+    font-size: 13px;
+  }
+  .history-footer {
+    line-height: 1.8;
+  }
+  .preparation-card {
+    padding: 24px;
+  }
+  .history-page-card {
+    padding: 12px;
+  }
+  .ui-table {
+    min-width: 440px;
+  }
+  .manual-reminder strong {
+    font-size: 14px;
+  }
+  .manual-reminder p {
+    font-size: 13px;
+  }
+  .main-footer,
+  .footer-version {
+    font-size: 12px;
+  }
+}
+.scan-form-error {
+  color: var(--critical);
+  margin-top: 12px;
+  font-size: 14px;
+}
+.data-state,
+.scan-detail-card {
+  padding: 24px;
+}
+.data-state p {
+  margin-bottom: 16px;
+}
+.scan-url-cell {
+  max-width: 420px;
+  overflow-wrap: anywhere;
+}
+.scan-url-cell a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.job-status-message {
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--accent);
+  line-height: 1.7;
+}
+.scan-metadata {
+  display: grid;
+  gap: 20px;
+  margin-top: 24px;
+}
+.scan-metadata dt {
+  color: var(--muted-foreground);
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.scan-metadata dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}

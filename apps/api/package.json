@@ -1,0 +1,37 @@
+{
+  "name": "@accesslens/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@accesslens/shared": "*",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-rate-limit": "8.7.1",
+    "helmet": "^8.1.0",
+    "ipaddr.js": "1.9.1",
+    "pg": "8.23.1",
+    "pino": "^10.1.0",
+    "pino-http": "^11.0.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/pg": "8.23.1",
+    "@types/supertest": "^6.0.3",
+    "prisma": "7.10.1",
+    "supertest": "^7.1.4",
+    "tsx": "^4.20.6"
+  }
+}

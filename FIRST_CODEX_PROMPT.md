@@ -1,0 +1,9 @@
+# Paste this into Codex
+
+You are the lead engineer building AccessLens, a real developer-facing website accessibility scanner. Read PRD.md, Architecture.md, Rules.md, Phases.md and Design.md completely before coding. Inspect the existing repository and environment.
+
+**Implement Phase 0 only** from Phases.md. Begin coding now, not merely planning. Create an npm-workspace monorepo with strict TypeScript, React/Vite frontend, Express backend and shared types. Set up the precise design system and accessible responsive application shell specified in Design.md, with the scan URL form explicitly labeled as preview/not yet functional until scanner endpoints exist. Add `/api/health`, environment templates, lint, typecheck and unit test infrastructure. Set up Prisma schema/configuration scaffolding for a Neon-hosted PostgreSQL database, but do not claim connectivity unless actually tested.
+
+**NO DOCKER OR CONTAINERS.** Node and app processes run natively; database may be managed (Neon). Do not add Dockerfile, docker-compose or container setup instructions. Do not use fake scan results or build later-phase modules. Make sure future scanning is designed for an isolated worker and secure SSRF controls; do not implement unrestricted arbitrary URL fetching.
+
+Once implementation begins, create Memory.md as a concise verified continuation record: current phase, completed items, key decisions, exact files changed, commands run and pass/fail outputs, unresolved blockers, and one next action. Do not prefill success claims. Run available tests, lint and typechecking; start the local app/API if supported. Update Memory.md with results. Fix errors you introduced. Conclude with a short implementation report, exact local run commands, verification results, and Phase 1 readiness. STOP and do not begin Phase 1 until explicitly instructed.

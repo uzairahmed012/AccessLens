@@ -1,0 +1,16 @@
+node_modules
+dist
+package-lock.json
+.npm-cache
+.agents
+artifacts
+test-results
+playwright-report
+apps/api/src/generated
+PRD.md
+Architecture.md
+Rules.md
+Phases.md
+Design.md
+README_START_HERE.md
+FIRST_CODEX_PROMPT.md

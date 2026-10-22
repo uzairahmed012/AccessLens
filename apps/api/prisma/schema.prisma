@@ -1,0 +1,60 @@
+// Phase 1 stores queued jobs. Findings remain empty until a future worker exists.
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  importFileExtension = "js"
+}
+
+enum ScanStatus {
+  queued
+  running
+  completed
+  failed
+}
+
+enum FindingImpact {
+  minor
+  moderate
+  serious
+  critical
+}
+
+model Scan {
+  id            String     @id @default(uuid()) @db.Uuid
+  url           String     @db.VarChar(2048)
+  normalizedUrl String     @db.VarChar(2048)
+  status        ScanStatus @default(queued)
+  createdAt     DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime   @updatedAt @db.Timestamptz(3)
+  startedAt     DateTime?  @db.Timestamptz(3)
+  finishedAt    DateTime?  @db.Timestamptz(3)
+  errorCode     String?    @db.VarChar(64)
+  errorSummary  String?    @db.VarChar(500)
+  findings      Finding[]
+
+  @@index([status, createdAt])
+  @@index([createdAt(sort: Desc), id(sort: Desc)])
+}
+
+model Finding {
+  id              String         @id @default(uuid()) @db.Uuid
+  scanId          String         @db.Uuid
+  scan            Scan           @relation(fields: [scanId], references: [id], onDelete: Cascade)
+  ruleId          String         @db.VarChar(128)
+  impact          FindingImpact?
+  description     String         @db.VarChar(4000)
+  help            String         @db.VarChar(2000)
+  helpUrl         String         @db.VarChar(2048)
+  wcagTags        String[]
+  targetSelectors String[]
+  sanitizedHtml   String?        @db.VarChar(10000)
+  failureSummary  String?        @db.VarChar(4000)
+  createdAt       DateTime       @default(now()) @db.Timestamptz(3)
+
+  @@index([scanId, impact])
+  @@index([scanId, ruleId])
+}
+
+datasource db {
+  provider = "postgresql"
+}

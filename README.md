@@ -1,8 +1,12 @@
-﻿# AccessLens
+# AccessLens
 
 A developer workspace for evidence-based website accessibility auditing. **Phase 1** adds queued scan jobs, safe URL intake and Neon-backed history to the separate application preview. Live scanning remains disabled. The public product illustration is explicitly labeled example content; it never requests or presents live scan data.
 
 The source requirements are `PRD.md`, `Architecture.md`, `Rules.md`, `Phases.md`, and `Design.md`. All processes run natively. **No Docker.**
+
+## Deploy on Vercel
+
+See [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) for the Services preset, environment values, routing and deployment checks. The Phase 1 app remains a demo with authentication and live scanning deferred.
 
 ## Run locally on Windows
 

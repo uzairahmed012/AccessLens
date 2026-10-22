@@ -37,3 +37,6 @@ artifacts/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Local Vercel project metadata
+.vercel/

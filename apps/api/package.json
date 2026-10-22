@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc -p tsconfig.build.json",
+    "build:vercel": "node ../../scripts/database-cli.mjs generate && npm run build --workspace @accesslens/shared && npm run build",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"

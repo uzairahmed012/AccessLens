@@ -1,4 +1,14 @@
-﻿# AccessLens project memory
+# AccessLens project memory
+
+## Vercel deployment setup — 2026-10-23
+
+- Repository was renamed to `C:\Users\AhmedUzair\Desktop\AccessLens`; current branch is `main`, with GitHub origin configured. Initial commit and ignore rules are in place; `.env`, local agent metadata, build/test output and generated Prisma sources are excluded.
+- Added root `vercel.json` using the current Services model: Express `api` owns `/api` and `/api/*`; Vite `web` owns the remaining paths with service-scoped SPA fallback. Services is Beta. Native runtimes only; no Docker and no Phase 2 worker.
+- Added `apps/api/src/vercel.ts`, an exported Express app/client instance without a listener. Existing `server.ts` remains the local entrypoint. Exact Vercel deployment/production hosts supplement configured CORS; no wildcard host approval.
+- Each service installs at monorepo root; shared contracts build before consumers. API build explicitly regenerates Prisma. No database migration runs during deployment.
+- Added `VERCEL_DEPLOYMENT.md`, README link and `.vercel/` ignore. Environment values are entered privately in Vercel; use isolated demo data, with scanning/auth still deferred. Cloud deployment and cloud database connectivity require verification after import; local validation evidence is recorded in the setup report.
+
+- Local deployment checks: current official schema validation PASS (draft-07 metadata compatibility), both exact workspace service builds PASS, API **115/115 tests PASS**, compiled production entrypoint plus six HTTP/CORS checks PASS, typecheck/lint/format PASS. Renamed-folder npm junctions repaired offline with no dependency upgrade. Details: `reports/report_vercel_setup.md`. Cloud deployment remains unverified until user completes import.
 
 ## Phase 1 — Neon persistence and secure URL intake
 

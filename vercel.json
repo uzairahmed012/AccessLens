@@ -1,0 +1,25 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "api": {
+      "root": "apps/api",
+      "framework": "express",
+      "entrypoint": "src/vercel.ts",
+      "installCommand": "npm ci --include=dev",
+      "buildCommand": "npm run build:vercel --workspace @accesslens/api"
+    },
+    "web": {
+      "root": "apps/web",
+      "framework": "vite",
+      "installCommand": "npm ci --include=dev",
+      "buildCommand": "npm run build:vercel --workspace @accesslens/web",
+      "outputDirectory": "dist",
+      "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+    }
+  },
+  "rewrites": [
+    { "source": "/api", "destination": { "service": "api" } },
+    { "source": "/api/:path*", "destination": { "service": "api" } },
+    { "source": "/(.*)", "destination": { "service": "web" } }
+  ]
+}

@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { databaseErrorMessage, prismaFailureMessage } from './database-errors.mjs';
 import {
   databaseEnvironment,
   validateNeonUrls,
@@ -45,10 +46,7 @@ try {
       },
     );
     // CLI migration diagnostics can contain database addresses; never forward them.
-    if (result.status !== 0)
-      throw new Error(
-        `Prisma ${operation} failed. Check configuration and network access; raw diagnostics withheld.`,
-      );
+    if (result.status !== 0) throw new Error(prismaFailureMessage(operation, result));
     console.log(
       operation === 'validate'
         ? 'Offline Prisma schema validation passed. Connectivity not checked.'
@@ -56,18 +54,6 @@ try {
     );
   }
 } catch (error) {
-  const safe =
-    error instanceof Error &&
-    !/postgres(?:ql)?:\/\/|password|@/i.test(error.message) &&
-    (error.message.startsWith('Database writes are guarded') ||
-      error.message.startsWith('DATABASE_URL must') ||
-      error.message.startsWith('DIRECT_URL must') ||
-      error.message.startsWith('The pooled and direct') ||
-      error.message.startsWith('Prisma '));
-  console.error(
-    safe
-      ? error.message
-      : 'Database operation failed. Check credentials, TLS, network access and the production API build. Details withheld.',
-  );
+  console.error(databaseErrorMessage(error));
   process.exitCode = 1;
 }

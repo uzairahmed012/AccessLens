@@ -50,3 +50,21 @@ Additional local verification: both exact service build commands passed again: `
 Publish the fix to `main`, inspect the new deployment's commit and updated install command, and recheck the existing deployment smoke checklist. If manually retrying, select the latest commit and disable the previous build cache. Cloud deployment is still pending verification.
 
 Reference: [npm workspace-root inclusion](https://docs.npmjs.com/cli/v11/commands/npm-ci/#include-workspace-root).
+
+## Prisma preparation failure follow-up — 2026-10-23
+
+The next cloud log confirms shared `tsc` succeeds, followed by `db:generate` failing in root `prepare` during the web service installation. The wrapper withheld the original exception, so the precise internal cloud cause is not established. The generic message is not evidence of incorrect database credentials. No cloud database connection was verified.
+
+Root `prepare` now invokes a small native Node script. When VERCEL=1, it defers work to the existing service build commands: web builds shared/Vite; API generates Prisma and compiles shared/API. Local npm preparation retains the previous shared build followed by generation and stops on a failing step. Dependency install scripts remain enabled; no broad `--ignore-scripts` workaround, dependency upgrade, schema change, migration or credentials change was introduced.
+
+The Prisma wrapper now prints fixed safe tooling/OS error codes, numeric exit status and Prisma P-codes when available. It continues to withhold raw CLI output and exception text that could contain connection details. Six focused redaction/diagnostic tests were added to root `npm test` through `test:tools`.
+
+Verification completed:
+
+- Dependency-free temporary copy outside the project: Vercel preparation exits 0 with no .env, TypeScript or Prisma available.
+- Missing-Prisma temporary fixture: generation exits 1 with safe MODULE_NOT_FOUND guidance, no raw stack/connection diagnostics.
+- Local `npm run prepare` with DATABASE_URL and DIRECT_URL explicitly disabled: PASS, shared compilation and Prisma generation.
+- Both exact `build:vercel` service commands with VERCEL=1, NODE_ENV=production and database credentials disabled: PASS. Frontend main JS remains 379.76 kB.
+- Six redaction tests: PASS. Changed-script ESLint: PASS.
+
+Final verification: root `npm test` PASS: 115 API + 14 web + 2 shared + 6 tooling = **137 tests**. Changed-file Prettier and `git diff --check` PASS. No browser or live database suites were rerun for this build-lifecycle patch. Cloud deployment remains pending: publish the fix, ensure the new prepare deferral appears in install logs, then check the API service generation/build and deployed routes. No scanner, auth, Docker or database writes were added.

@@ -38,11 +38,17 @@ Jobs remain queued. There is no scanner worker, findings generation or authentic
 
 ## If installation reports `tsc: command not found`
 
-Make sure the deployed commit contains the updated `installCommand` for both services, including `--workspaces --include-workspace-root`. TypeScript is a root development dependency and must be installed before the root `prepare` hook builds the shared package. Push the fix to `main`; check the new deployment uses the new commit. If manually retrying, redeploy the latest commit without the previous build cache. The npm `cache-dir` warning alone does not cause this failure.
+Make sure the deployed commit contains the updated `installCommand` for both services, including `--workspaces --include-workspace-root`. TypeScript is a root development dependency and must be installed for each service build. Push the fix to `main`; check the new deployment uses the new commit. If manually retrying, redeploy the latest commit without the previous build cache. The npm `cache-dir` warning alone does not cause this failure.
+
+## If installation fails during `db:generate`
+
+Use the latest commit containing `scripts/prepare.mjs`. Vercel installation should print `Vercel: deferring shared compilation and Prisma generation to service builds.` Prisma generation then belongs to the API service build, not the web install.
+
+If the API build fails, copy its new safe diagnostic: missing tooling now reports an error code such as `MODULE_NOT_FOUND`; CLI failures report exit status and a Prisma error code when available. Raw CLI output and connection details remain withheld. A generic generation error does not prove the database credentials are wrong. Generation does not apply migrations or test database connectivity.
 
 ## Configuration details
 
-Both service install commands explicitly select all workspaces and include the repository root (`npm ci --include=dev --workspaces --include-workspace-root`). This installs root build tools such as TypeScript even when npm is invoked from a service workspace. The shared workspace is built before either consumer; the API build explicitly regenerates Prisma so cached dependencies do not leave a stale generated client.
+Both service install commands explicitly select all workspaces and include the repository root (`npm ci --include=dev --workspaces --include-workspace-root`). This installs root build tools such as TypeScript even when npm is invoked from a service workspace. On Vercel (`VERCEL=1`), root `prepare` defers compilation and generation to the service build commands. The web build compiles shared contracts and Vite only; the API build generates Prisma, compiles shared contracts, and compiles the API. Local npm installs still prepare shared contracts and Prisma automatically. This keeps frontend installation independent of backend generation while ensuring the API always generates its client.
 
 Top-level rewrites give `/api` and `/api/*` to the API before the frontend catch-all. The full request path is preserved, matching existing Express routes. The frontend has a service-scoped SPA fallback to `/index.html`; assets remain framework-managed. The API exports an Express app for Vercel without starting a listener. Native development continues to use `src/server.ts`.
 

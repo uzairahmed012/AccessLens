@@ -12,7 +12,7 @@
     "npm": ">=10"
   },
   "scripts": {
-    "prepare": "npm run build --workspace @accesslens/shared && npm run db:generate",
+    "prepare": "node scripts/prepare.mjs",
     "dev": "concurrently -k -n API,WEB -c cyan,blue \"npm:dev:api\" \"npm:dev:web\"",
     "dev:web": "npm run dev --workspace @accesslens/web",
     "dev:api": "npm run dev --workspace @accesslens/api",
@@ -22,7 +22,8 @@
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "npm run test --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present && npm run test:tools",
+    "test:tools": "node --test scripts/*.test.mjs",
     "test:e2e": "playwright test",
     "db:validate": "node scripts/database-cli.mjs validate",
     "db:generate": "node scripts/database-cli.mjs generate",

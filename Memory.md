@@ -1,5 +1,13 @@
 # AccessLens project memory
 
+## Vercel prepare lifecycle correction — 2026-10-23
+
+- Cloud log after `7876405` confirms shared TypeScript compilation succeeds, then root `db:generate` exits with the generic wrapper error during the web service install. The underlying cloud exception is not known; do not claim incorrect Neon credentials or verified missing modules.
+- Root `prepare` now runs `scripts/prepare.mjs`. With VERCEL=1 it defers work to explicit service builds. Web builds shared/Vite only; API still explicitly generates Prisma and builds shared/API. Local npm preparation retains the existing shared build followed by generation, including failure propagation. Dependencies, lockfile, secrets, migration guards and project architecture are unchanged.
+- Prisma wrapper diagnostics now expose fixed module/OS error codes, numeric exit status and Prisma P-codes, while withholding raw exception/CLI output. Added six credential-redaction tests in `scripts/database-errors.test.mjs`, included in root `npm test` via `test:tools`.
+- Verified: isolated cloud prepare with no dependencies or .env PASS; simulated missing Prisma reports safe MODULE_NOT_FOUND PASS; local npm prepare with credentials explicitly disabled PASS; both exact service build commands with VERCEL=1 and credentials disabled PASS; changed scripts ESLint PASS; six redaction tests PASS. Full root npm test PASS: 115 API + 14 web + 2 shared + 6 tooling = 137 tests. Changed-file Prettier and git diff --check PASS. Browser and live database checks were not rerun for this build-lifecycle patch.
+- Deployment guide and relevant Vercel report updated. Next: push the local fix commit to main and inspect the new cloud deployment. Cloud success and cloud database connectivity remain unverified; no Phase 2 or Docker work, migrations, target browsing or database writes occurred.
+
 ## Vercel missing TypeScript fix — 2026-10-23
 
 - User's first cloud build of commit `62933ed` failed during root `prepare`: `tsc: command not found` while building `@accesslens/shared`. The npm `cache-dir` warning is separate from the fatal error.

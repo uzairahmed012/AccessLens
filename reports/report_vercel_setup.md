@@ -10,7 +10,7 @@ Status: **Local configuration checks PASS. Cloud deployment and cloud database c
 - Service-scoped SPA rewrite preserves direct navigation/refresh on `/app/*`, with API routes selected before the frontend catch-all.
 - `apps/api/src/vercel.ts` exports the existing Express application without starting a listener. Native development still uses `server.ts`.
 - Exact platform-provided deployment/production origins are allowed alongside explicitly configured CORS origins. Other Vercel projects are not implicitly trusted.
-- Each workspace has a `build:vercel` command. Shared contracts build before consumers; the API explicitly regenerates Prisma. `npm ci --include=dev` installs build tools even when NODE_ENV is production. No database migration is included.
+- Each workspace has a `build:vercel` command. Shared contracts build before consumers; the API explicitly regenerates Prisma. `npm ci --include=dev --workspaces --include-workspace-root` explicitly installs workspace dependencies and root build tools even when invoked from a service directory with NODE_ENV set to production. No database migration is included.
 - `.vercel/` metadata ignored; no credentials were changed or added to source. Added `VERCEL_DEPLOYMENT.md`, README instructions and Memory context.
 - Added seven entrypoint regression cases. Missing database configuration is explicit in the tests; no database connection or submitted-site navigation occurs.
 
@@ -36,3 +36,17 @@ Follow `VERCEL_DEPLOYMENT.md`: push the configuration commit to `main`, refresh 
 Use isolated Phase 1 demo data. Preview and Production should use separate branches when data isolation is needed. Jobs remain queued; no authentication, worker, real findings, distributed rate-limit store or production ownership controls are introduced here. Verify `/api/health`, `/app/history`, `/app/new` and SPA refresh after deployment. No Docker is used.
 
 References: [Services](https://vercel.com/docs/services), [service configuration](https://vercel.com/docs/services/config-reference), [routing](https://vercel.com/docs/services/routing), [system variables](https://vercel.com/docs/environment-variables/system-environment-variables).
+
+## Deployment failure follow-up — 2026-10-23
+
+The first cloud deployment of commit `62933ed` reached root `prepare` and failed building the shared package: `sh: line 1: tsc: command not found` (exit 127). The preceding npm `cache-dir` warning was not the fatal error. TypeScript is declared in root devDependencies, but npm invoked in a workspace can filter the installation to that workspace and omit root tools. Earlier successful local builds used an existing dependency tree and did not test this condition.
+
+Both services now install with `npm ci --include=dev --workspaces --include-workspace-root`. This selects all workspace dependencies and the root build dependencies before the existing prepare hook. No package versions, lockfile, secrets, application features or migrations changed.
+
+Verification: a minimal isolated monorepo outside the project, using Node 24.22.0/npm 11.6.2 and a root-only TypeScript dependency, reproduced the missing executable with the old service-directory command. Repeating the installation with the corrected flags passed and ran TypeScript 5.9.3. The first diagnostic copy inside the repository could inherit ancestor executables and was unsuitable for proving isolation; its full installation was stopped. A full clean AccessLens installation or cloud build is not claimed as verified by this reproduction.
+
+Additional local verification: both exact service build commands passed again: `npm run build:vercel --workspace @accesslens/api` (Prisma generation, shared build and API compilation) and `npm run build:vercel --workspace @accesslens/web` (shared build and Vite production bundle). Changed-file Prettier checks and `git diff --check` passed. Unit/browser suites were not rerun because this patch only changes install configuration and documentation.
+
+Publish the fix to `main`, inspect the new deployment's commit and updated install command, and recheck the existing deployment smoke checklist. If manually retrying, select the latest commit and disable the previous build cache. Cloud deployment is still pending verification.
+
+Reference: [npm workspace-root inclusion](https://docs.npmjs.com/cli/v11/commands/npm-ci/#include-workspace-root).

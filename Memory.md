@@ -1,11 +1,18 @@
 # AccessLens project memory
 
+## Vercel missing TypeScript fix — 2026-10-23
+
+- User's first cloud build of commit `62933ed` failed during root `prepare`: `tsc: command not found` while building `@accesslens/shared`. The npm `cache-dir` warning is separate from the fatal error.
+- Both service install commands now use `npm ci --include=dev --workspaces --include-workspace-root`. npm invoked from a service workspace can omit root development dependencies; TypeScript is declared at the repository root. No dependency versions, environment values, application behavior or migration steps changed.
+- Reproduced the omission with Node 24.22.0/npm 11.6.2 in a minimal temporary monorepo outside the project: old service-directory install failed because `tsc` was unavailable; the corrected command passed and printed TypeScript 5.9.3. The initial diagnostic copy inside this repository was unsuitable because npm scripts can inherit ancestor `.bin` directories; its full install was stopped. This is not a claim that a full clean AccessLens/cloud install passed.
+- Both exact AccessLens service builds passed again (API Prisma generation/shared/API compilation; web shared/Vite build). Formatting and patch whitespace checks passed. No application source changed, so unit/browser suites were not rerun for this install-configuration fix. Deployment guide and setup report updated. Cloud redeployment remains pending; publish the fix to `main` and verify the new deployment's commit and install command. Keep Phase 1 scope; no Phase 2, Docker or database writes.
+
 ## Vercel deployment setup — 2026-10-23
 
 - Repository was renamed to `C:\Users\AhmedUzair\Desktop\AccessLens`; current branch is `main`, with GitHub origin configured. Initial commit and ignore rules are in place; `.env`, local agent metadata, build/test output and generated Prisma sources are excluded.
 - Added root `vercel.json` using the current Services model: Express `api` owns `/api` and `/api/*`; Vite `web` owns the remaining paths with service-scoped SPA fallback. Services is Beta. Native runtimes only; no Docker and no Phase 2 worker.
 - Added `apps/api/src/vercel.ts`, an exported Express app/client instance without a listener. Existing `server.ts` remains the local entrypoint. Exact Vercel deployment/production hosts supplement configured CORS; no wildcard host approval.
-- Each service installs at monorepo root; shared contracts build before consumers. API build explicitly regenerates Prisma. No database migration runs during deployment.
+- Service installs explicitly include every workspace and the root development tools; shared contracts build before consumers. API build explicitly regenerates Prisma. No database migration runs during deployment.
 - Added `VERCEL_DEPLOYMENT.md`, README link and `.vercel/` ignore. Environment values are entered privately in Vercel; use isolated demo data, with scanning/auth still deferred. Cloud deployment and cloud database connectivity require verification after import; local validation evidence is recorded in the setup report.
 
 - Local deployment checks: current official schema validation PASS (draft-07 metadata compatibility), both exact workspace service builds PASS, API **115/115 tests PASS**, compiled production entrypoint plus six HTTP/CORS checks PASS, typecheck/lint/format PASS. Renamed-folder npm junctions repaired offline with no dependency upgrade. Details: `reports/report_vercel_setup.md`. Cloud deployment remains unverified until user completes import.

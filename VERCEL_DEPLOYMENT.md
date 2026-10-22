@@ -36,9 +36,13 @@ Click Deploy once Vercel recognizes the root configuration. Check:
 
 Jobs remain queued. There is no scanner worker, findings generation or authentication in Phase 1. Keep this a demo with isolated data; in-memory limits are per function instance and are not distributed production rate limits.
 
+## If installation reports `tsc: command not found`
+
+Make sure the deployed commit contains the updated `installCommand` for both services, including `--workspaces --include-workspace-root`. TypeScript is a root development dependency and must be installed before the root `prepare` hook builds the shared package. Push the fix to `main`; check the new deployment uses the new commit. If manually retrying, redeploy the latest commit without the previous build cache. The npm `cache-dir` warning alone does not cause this failure.
+
 ## Configuration details
 
-The root `services` configuration builds each workspace independently after installation at the repository root. The shared workspace is built before either consumer; the API build explicitly regenerates Prisma so cached dependencies do not leave a stale generated client.
+Both service install commands explicitly select all workspaces and include the repository root (`npm ci --include=dev --workspaces --include-workspace-root`). This installs root build tools such as TypeScript even when npm is invoked from a service workspace. The shared workspace is built before either consumer; the API build explicitly regenerates Prisma so cached dependencies do not leave a stale generated client.
 
 Top-level rewrites give `/api` and `/api/*` to the API before the frontend catch-all. The full request path is preserved, matching existing Express routes. The frontend has a service-scoped SPA fallback to `/index.html`; assets remain framework-managed. The API exports an Express app for Vercel without starting a listener. Native development continues to use `src/server.ts`.
 

@@ -21,3 +21,14 @@ test('vercel build rejects an unknown service', () => {
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /Usage: node scripts\/vercel-build\.mjs api\|web/);
 });
+
+test('service launchers resolve the repo scripts from the file URL, not cwd', () => {
+  for (const app of ['api', 'web']) {
+    const result = spawnSync(process.execPath, [join(root, 'apps', app, 'vercel-service.mjs')], {
+      cwd: join(root, 'apps', app),
+      encoding: 'utf8',
+    });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /Usage: node vercel-service\.mjs install\|build/);
+  }
+});

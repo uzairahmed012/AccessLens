@@ -5,14 +5,14 @@
       "root": "apps/api",
       "framework": "express",
       "entrypoint": "src/vercel.ts",
-      "installCommand": "sh -c 'if [ -f scripts/vercel-install.mjs ]; then node scripts/vercel-install.mjs; else node ../../scripts/vercel-install.mjs; fi'",
-      "buildCommand": "sh -c 'if [ -f scripts/vercel-build.mjs ]; then node scripts/vercel-build.mjs api; else node ../../scripts/vercel-build.mjs api; fi'"
+      "installCommand": "node vercel-service.mjs install",
+      "buildCommand": "node vercel-service.mjs build"
     },
     "web": {
       "root": "apps/web",
       "framework": "vite",
-      "installCommand": "sh -c 'if [ -f scripts/vercel-install.mjs ]; then node scripts/vercel-install.mjs; else node ../../scripts/vercel-install.mjs; fi'",
-      "buildCommand": "sh -c 'if [ -f scripts/vercel-build.mjs ]; then node scripts/vercel-build.mjs web; else node ../../scripts/vercel-build.mjs web; fi'",
+      "installCommand": "node vercel-service.mjs install",
+      "buildCommand": "node vercel-service.mjs build",
       "outputDirectory": "dist",
       "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
     }

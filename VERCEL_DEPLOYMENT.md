@@ -38,7 +38,7 @@ Jobs remain queued. There is no scanner worker, findings generation or authentic
 
 ## If installation reports `tsc: command not found`
 
-Make sure the deployed commit runs `scripts/vercel-install.mjs`. That command always executes `npm ci` from the repository root with `--workspaces --include-workspace-root`, so TypeScript and other root development tools are present even when Vercel starts the install inside `apps/web` or `apps/api`. Push the fix to `main`; check the new deployment uses the new commit. If manually retrying, redeploy the latest commit without the previous build cache. The npm `cache-dir` warning alone does not cause this failure.
+Make sure the deployed commit runs `node vercel-service.mjs install` from each service directory. That launcher imports `scripts/vercel-install.mjs` using the file URL, then `npm ci` from the repository root with `--workspaces --include-workspace-root`. Do not put `../` in `installCommand` or `buildCommand`: Vercel resolves those paths against `apps/api` or `apps/web` and looks for `apps/scripts`. Push the fix to `main`; check the new deployment uses the new commit. If manually retrying, redeploy the latest commit without the previous build cache. The npm `cache-dir` warning alone does not cause this failure.
 
 Vercel now defaults new projects to Node.js 26. AccessLens pins the API and web services to Node.js 24.x (see each workspace `engines.node` and `.node-version`). Redeploy after this commit so the build does not pick Node 26 from the root range `>=22.12.0`.
 
@@ -50,7 +50,7 @@ If the API build fails, copy its new safe diagnostic: missing tooling now report
 
 ## Configuration details
 
-Install and build commands locate `scripts/vercel-install.mjs` and `scripts/vercel-build.mjs` from either the repository root or a service directory. Those scripts always run `npm ci` / `npm run build` from the workspace root, so `--workspace` flags and the lockfile resolve correctly. On Vercel (`VERCEL=1`), root `prepare` still defers compilation and Prisma generation to the service build commands. The web build compiles shared contracts and Vite only; the API build generates Prisma, compiles shared contracts, and compiles the API. Local npm installs still prepare shared contracts and Prisma automatically. This keeps frontend installation independent of backend generation while ensuring the API always generates its client.
+Each service runs `node vercel-service.mjs install|build`. The launcher lives next to the service `package.json` and imports the root scripts by file URL so the command string never contains `../`. Those scripts always run `npm ci` / `npm run build` from the workspace root, so `--workspace` flags and the lockfile resolve correctly. On Vercel (`VERCEL=1`), root `prepare` still defers compilation and Prisma generation to the service build commands. The web build compiles shared contracts and Vite only; the API build generates Prisma, compiles shared contracts, and compiles the API. Local npm installs still prepare shared contracts and Prisma automatically. This keeps frontend installation independent of backend generation while ensuring the API always generates its client.
 
 Top-level rewrites give `/api` and `/api/*` to the API before the frontend catch-all. The full request path is preserved, matching existing Express routes. The frontend has a service-scoped SPA fallback to `/index.html`; assets remain framework-managed. The API exports an Express app for Vercel without starting a listener. Native development continues to use `src/server.ts`.
 

@@ -45,6 +45,21 @@ export const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema>;
 
+export function withPlatformOrigins(env: Env, source: NodeJS.ProcessEnv = process.env): Env {
+  if (source.VERCEL !== '1') return env;
+  const origins = source.CORS_ORIGINS ? [...env.CORS_ORIGINS] : [];
+  for (const hostname of [source.VERCEL_URL, source.VERCEL_PROJECT_PRODUCTION_URL]) {
+    if (!hostname) continue;
+    try {
+      const origin = `https://${hostname}`;
+      if (new URL(origin).origin === origin) origins.push(origin);
+    } catch {
+      // Ignore invalid platform overrides; do not broaden the origin policy.
+    }
+  }
+  return { ...env, CORS_ORIGINS: [...new Set(origins)] };
+}
+
 export function loadEnv(): Env {
   config({ path: fileURLToPath(new URL('../../../../.env', import.meta.url)), quiet: true });
   const result = envSchema.safeParse(process.env);
@@ -54,5 +69,5 @@ export function loadEnv(): Env {
       `Invalid environment variables: ${Object.keys(result.error.flatten().fieldErrors).join(', ')}`,
     );
   }
-  return result.data;
+  return withPlatformOrigins(result.data);
 }

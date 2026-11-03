@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
     "build": "vite build",
-    "build:vercel": "npm run build --workspace @accesslens/shared && npm run build",
+    "build:vercel": "node ../../scripts/vercel-build.mjs web",
     "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
@@ -41,5 +41,8 @@
     "jsdom": "^27.2.0",
     "tailwindcss": "^4.1.17",
     "vite": "^8.3.4"
+  },
+  "engines": {
+    "node": "24.x"
   }
 }

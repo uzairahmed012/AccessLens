@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { envSchema } from '../src/config/env.js';
+import { envSchema, withPlatformOrigins } from '../src/config/env.js';
 
 describe('environment validation', () => {
   it('starts without database credentials and uses safe native development defaults', () => {
@@ -28,4 +28,28 @@ describe('environment validation', () => {
       expect(envSchema.safeParse({ DATABASE_URL }).success).toBe(false);
     },
   );
+  it('adds exact Vercel deployment origins without trusting every vercel.app host', () => {
+    const env = envSchema.parse({ CORS_ORIGINS: 'https://custom.example.org' });
+    const origins = withPlatformOrigins(env, {
+      VERCEL: '1',
+      CORS_ORIGINS: 'https://custom.example.org',
+      VERCEL_URL: 'accesslens-preview.vercel.app',
+      VERCEL_PROJECT_PRODUCTION_URL: 'accesslens.vercel.app',
+    }).CORS_ORIGINS;
+    expect(origins).toEqual([
+      'https://custom.example.org',
+      'https://accesslens-preview.vercel.app',
+      'https://accesslens.vercel.app',
+    ]);
+  });
+  it('does not keep localhost defaults when Vercel CORS_ORIGINS is unset', () => {
+    const env = envSchema.parse({});
+    expect(env.CORS_ORIGINS).toContain('http://127.0.0.1:5173');
+    expect(
+      withPlatformOrigins(env, {
+        VERCEL: '1',
+        VERCEL_URL: 'accesslens.vercel.app',
+      }).CORS_ORIGINS,
+    ).toEqual(['https://accesslens.vercel.app']);
+  });
 });

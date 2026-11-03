@@ -1,5 +1,12 @@
 # AccessLens project memory
 
+## Vercel deploy hardening — 2026-11-03
+
+- Cloud deploys after Phase 1 still failed or were unverified. Two remaining build-breakers: (1) service `installCommand`/`buildCommand` used npm `--workspace` while Vercel Services cwd is `apps/api` or `apps/web`; (2) root `engines.node` `>=22.12.0` now selects **Node 26** on Vercel (default since 2026-10-29). Vite 8 and Prisma 7.10.1 were never verified on 26.
+- Added `scripts/vercel-install.mjs` and `scripts/vercel-build.mjs`. They always run npm from the repository root. `vercel.json` locates the scripts from either the git root or a service directory without retrying a failed install.
+- Pinned API/web/shared `engines.node` to `24.x`, root engines to `>=22.12.0 <26`, and added `.node-version` `24`. Platform CORS origins now apply in `loadEnv` so either Express entrypoint gets them.
+- Next: push this commit to `main`, redeploy without build cache, confirm logs show Node v24 and `AccessLens install`/`AccessLens api|web build`, then smoke `/`, `/api/health`, `/app/history`. No Phase 2, Docker, migrations or target browsing.
+
 ## Vercel prepare lifecycle correction — 2026-10-23
 
 - Cloud log after `7876405` confirms shared TypeScript compilation succeeds, then root `db:generate` exits with the generic wrapper error during the web service install. The underlying cloud exception is not known; do not claim incorrect Neon credentials or verified missing modules.
